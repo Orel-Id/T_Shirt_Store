@@ -111,6 +111,48 @@ require "header.php";
 
             </form>
         </div>
+        <div id="VoirStock" class="StockView">
+            <?php
+            if(isset($_GET["categorie"]) AND isset($_GET["taille"]) AND isset($_GET["genre"])){
+                $tab['categorie'] = $_GET["categorie"];
+                $tab['taille'] = $_GET["taille"];
+                $tab['genre'] = $_GET["genre"];
+                echo voirStock($tab);
+            }elseif(isset($_GET["categorie"]) AND isset($_GET["taille"])){
+                $tab['categorie'] = $_GET["categorie"];
+                $tab['taille'] = $_GET["taille"];
+                $tab['genre'] = "none";
+                echo voirStock($tab);
+            }elseif(isset($_GET["genre"]) AND isset($_GET["taille"])){
+                $tab['categorie'] = "none";
+                $tab['taille'] = $_GET["taille"];
+                $tab['genre'] = $_GET["genre"];
+                echo voirStock($tab);
+            }elseif(isset($_GET["genre"]) AND isset($_GET["categorie"])){
+                $tab['categorie'] = $_GET["categorie"];
+                $tab['taille'] = "none";
+                $tab['genre'] = $_GET["genre"];
+                echo voirStock($tab);
+            }elseif (isset($_GET["taille"])){
+                $tab['categorie'] = "none";
+                $tab['taille'] = $_GET["taille"];
+                echo voirStock($tab);
+            }elseif (isset($_GET["categorie"])){
+                $tab['categorie'] = $_GET["categorie"];
+                $tab['taille'] = "none";
+                $tab['genre'] = "none";
+                echo voirStock($tab);
+            }elseif (isset($_GET["genre"])){
+                $tab['genre'] = $_GET["genre"];
+                $tab['taille'] = "none";
+                $tab['categorie'] = "none";
+                echo voirStock($tab);
+            }else{
+                echo voirStock();
+            }
+
+            ?>
+        </div>
     </div>
     <div id="Categories" class="categories">
         Catégories
@@ -129,10 +171,15 @@ require "header.php";
 
     mysqli_close($connexion);
     ?>
+
+    <p id="selection"><p>
+
     <script type="text/javascript">
-        document.getElementById("Stock").style.display = "none";
-        document.getElementById("Categories").style.display = "none";
-        document.getElementById("Commandes").style.display = "none";
+      /*  document.getElementById("Stock").style.display = "none";*/
+      document.getElementById("Stock").style.display = "block";
+      document.getElementById("Categories").style.display = "none";
+      document.getElementById("Commandes").style.display = "none";
+
 
         document.getElementById("Bstock").addEventListener('click',function(){
             document.getElementById("Stock").style.display = "block";
@@ -149,6 +196,59 @@ require "header.php";
             document.getElementById("Categories").style.display = "none";
             document.getElementById("Commandes").style.display = "block";
         })
+        function filtreCategorie() {
+            var x = document.getElementById("mySelect").value;
+            document.getElementById("selection").innerHTML = "You selected: " + x;
+            <?php
+            if(isset($_GET["taille"]) AND isset($_GET["genre"])){
+                $location = "admin.php?taille=".$_GET["taille"]."&genre=".$_GET["genre"]."&categorie=";
+            }elseif(isset($_GET["genre"])){
+                $location = "admin.php?genre=".$_GET["genre"]."&categorie=";
+            }elseif (isset($_GET["taille"])){
+                $location = "admin.php?taille=".$_GET["taille"]."&categorie=";
+            }else{
+                $location = "admin.php?categorie=";
+            }
+
+            ?>
+            var url = '<?php echo $location; ?>';
+            document.location.href=url+x;
+        }
+        function filtreTaille() {
+            var x = document.getElementById("mySelectTaille").value;
+            <?php
+            if(isset($_GET["categorie"]) AND isset($_GET["genre"])){
+                $location = "admin.php?categorie=".$_GET["categorie"]."&genre=".$_GET["genre"]."&taille=";
+            }elseif(isset($_GET["categorie"])){
+                $location = "admin.php?categorie=".$_GET["categorie"]."&genre=";
+            }elseif (isset($_GET["taille"])){
+                $location = "admin.php?taille=".$_GET["taille"]."&genre=";
+            }else{
+                $location = "admin.php?taille=";
+            }
+
+            ?>
+            var url = '<?php echo $location; ?>';
+            document.location.href=url+x;
+        }
+        function filtreGenre(){
+            var x = document.getElementById("mySelectGenre").value;
+            <?php
+            if(isset($_GET["categorie"]) AND isset($_GET["taille"])){
+                $location = "admin.php?categorie=".$_GET["categorie"]."&taille=".$_GET["taille"]."&genre=";
+            }elseif(isset($_GET["categorie"])){
+                     $location = "admin.php?categorie=".$_GET["categorie"]."&genre=";
+                }elseif (isset($_GET["taille"])){
+                     $location = "admin.php?taille=".$_GET["taille"]."&genre=";
+                }else{
+                    $location = "admin.php?genre=";
+                }
+            ?>
+            var url = '<?php echo $location; ?>';
+            document.location.href=url+x;
+        }
+
+
     </script>
 
 </body>

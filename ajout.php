@@ -68,7 +68,7 @@ if(!$error){
 
                 if($connexion = mysqli_connect(HOST,USER,PASS,NOM_DB)) {
                     if ($results = mysqli_query($connexion, $sql)) {
-                        $idTshirtAdd[] = mysqli_insert_id($connexion);;
+                        $idTshirtAdd[] = mysqli_insert_id($connexion);
                     }else {
                         $error = true;
                         $message = "Erreur requête";
