@@ -1,0 +1,104 @@
+@font-face {
+    font-family: montserrat;
+    src: url("../assets/Montserrat/Montserrat-Light.ttf");
+    font-weight: normal;
+}
+*{
+    font-family: montserrat;
+}
+.flex{
+    display: flex;
+}
+.f-space-between{
+    justify-content: space-between;
+}
+.f-center{
+    justify-content: center;
+}
+/* HEADER */
+
+.logo{
+    width: 70px;
+    height: 70px;
+}
+.main-header{
+    width: 95vw;
+    height: 50px;
+    padding: 20px 20px 20px 20px;
+}
+
+.mainNav{
+    width: 70vw;
+    height: 100%;
+    margin: auto;
+}
+.mainNav ul li{
+    padding: 20px 20px 15px 20px;
+}
+.mainNav ul li a{
+    color: black;
+    font-family: montserrat;
+}
+.mainNav ul li a:hover{
+    color: #4b6d72;
+}
+
+.user_tools{
+    margin-top: 10px;
+    height: 30px;
+    width: 30px;
+    stroke-width: 20px
+}
+
+.user svg:hover{
+    fill: #4b6d72;
+}
+
+/* INDEX */
+
+.recents,.populaires{
+    margin: auto;
+    max-width: 1000px;
+    padding: 20px 30px 20px 30px;
+    border: solid 1px black;
+}
+
+.main-header div:nth-of-type(2){
+    height: 100%;
+}
+.mainIndex{
+    margin: 50px auto 50px auto;
+}
+.user{
+    width: 80px;
+    height: 100%;
+}
+
+/* ADMIN */
+
+.adminNav{
+    width: 70vh;
+    margin: auto;
+}
+
+.adminNav ul li:hover{
+    color: #4b6d72;
+    cursor: pointer;
+}
+
+
+.stock,.commandes,.categories{
+    width: 100vw;
+    border: solid 1px black;
+}
+
+/* ADMIN STOCK */
+
+table{
+    margin: 50px auto 50px auto;
+    border: 1px solid black;
+    border-radius: 20px;
+}
+th,td{
+    padding: 10px;
+}
