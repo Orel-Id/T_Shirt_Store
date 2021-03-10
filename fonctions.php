@@ -70,7 +70,9 @@ function SelectConstrutor($title,$sql,$idSelect,$FunctionName,$distinct){
             if($distinct){
                 $selectHtml = $selectHtml."<option value='none'>--".$title."--</option>";
                 while ($row = mysqli_fetch_row($results)) {
-                    $selectHtml =  $selectHtml . "<option value='" . $row[0] . "'>" . $row[0] . "</option>";
+                    $nomId = str_replace(" ","_",$row[0]);
+                    $nomId = str_replace("&","ET",$nomId);
+                    $selectHtml =  $selectHtml . "<option value='" . $nomId . "'>" . $row[0] . "</option>";
                 }
             }else{
                 $selectHtml = $selectHtml."<option value='0'>--Choisir ".$title."--</option>";
@@ -173,9 +175,10 @@ function showStock($tab = 'none'){
             $sql = $sql." AND Artiste.ID = ".$tab['artiste'] ." ";
         }
 
-        if(isset($tab['nom']) AND strlen($tab['nom']) != 0 AND $tab['nom'] != "none"){
-            $nom = str_replace("%20"," ",$tab['nom']);
+        if(isset($tab['nom']) AND strlen($tab['nom']) != 0 AND $tab['nom'] != 'none'){
+            $nom = str_replace("_"," ",$tab['nom']);
             $nom = "'".$nom."'";
+            $nom = str_replace("ET","&",$nom);
             echo "<br>Le nom est: ".$nom;
             $sql = $sql." AND T_Shirt.Name = ".$nom ." ";
             }

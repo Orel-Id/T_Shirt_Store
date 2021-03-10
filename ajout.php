@@ -3,8 +3,6 @@
 require "fonctions.php";
 
 print_r($_POST);
-/* [1] => 5 [2] => 5 [3] => 1 [4] => 6 [7] => 6 [8] => 8 [9] => 9 */
-
 
 if(isset($_POST["nom"]) AND $_POST["nom"] != "" AND strlen($_POST["nom"]) <100){
     $nom = $_POST["nom"];
