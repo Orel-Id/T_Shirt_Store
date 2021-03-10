@@ -3,7 +3,7 @@
     src: url("../assets/Montserrat/Montserrat-Light.ttf");
     font-weight: normal;
 }
-*{
+body{
     font-family: montserrat;
 }
 .flex{
@@ -15,8 +15,20 @@
 .f-center{
     justify-content: center;
 }
+.f-columns{
+    flex-direction: column;
+}
 /* HEADER */
-
+header{
+    position: fixed;
+    top:0;
+    right: 0;
+    left: 0;
+    background: white;
+}
+body{
+    padding-top: 90px;
+}
 .logo{
     width: 70px;
     height: 70px;
@@ -74,31 +86,3 @@
     height: 100%;
 }
 
-/* ADMIN */
-
-.adminNav{
-    width: 70vh;
-    margin: auto;
-}
-
-.adminNav ul li:hover{
-    color: #4b6d72;
-    cursor: pointer;
-}
-
-
-.stock,.commandes,.categories{
-    width: 100vw;
-    border: solid 1px black;
-}
-
-/* ADMIN STOCK */
-
-table{
-    margin: 50px auto 50px auto;
-    border: 1px solid black;
-    border-radius: 20px;
-}
-th,td{
-    padding: 10px;
-}

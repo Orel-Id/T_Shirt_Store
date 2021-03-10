@@ -7,7 +7,8 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;900&display=swap" >
         -->
         <link rel="stylesheet" href="css/reset.css" />
-        <link rel="stylesheet" href="css/main.css" />
+       <!-- <link rel="stylesheet" href="css/main.css" />-->
+        <link type="text/css" rel="stylesheet" href="css/main.css?t=<? echo time(); ?>" media="all"/    >
         <?php
             require ('fonctions.php');
         ?>
