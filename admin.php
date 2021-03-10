@@ -44,7 +44,7 @@
     </div>
     <div id="Ajout" class="Ajout">
         <h2><span>Ajouter un t-shirt</span></h2>
-        <form action="ajout.php" method="post">
+        <form action="ajout.php" method="post" enctype="multipart/form-data">>
             <table class="TabAjout">
                 <thead>
                 <tr>
@@ -128,6 +128,13 @@
                     $message = "Erreur requête";
                 }
                 ?>
+                <tr>
+                    <td colspan="2"><input type="file" name="avatar" accept=".png,.jpg,.jpeg"></td>
+                </tr>
+               
+                <tr>
+                    <input type="hidden" name="MAX_FILE_SIZE" value="100000">
+                </tr>
                 <tr>
                     <th colspan="4"><label for="SaveT-shirt"><input class="enregistrer" type="submit" id="SaveT-shirt" value="Enregistrer"></th>
                 </tr>
