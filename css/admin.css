@@ -1,0 +1,153 @@
+/* ADMIN */
+@font-face {
+    font-family: montserrat;
+    src: url("../assets/Montserrat/Montserrat-Light.ttf");
+    font-weight: normal;
+}
+.flex{
+    display: flex;
+}
+.f-space-between{
+    justify-content: space-between;
+}
+.stock,.commandes,.Ajout,.categories{
+    min-width: 1000px;
+    padding-right: 200px;
+}
+/******** NAV *******/
+.adminNav{
+    color: white;
+    height: 600px;
+}
+
+
+.log{
+    text-align: right;
+    padding-top: 10px;
+    color: white;
+    display: inline-block;
+    width: 50px;
+}
+.profil{
+    filter: invert(1);
+    width: 25px;
+}
+.adminNav li a:hover{
+    color: #4b6d72;
+    cursor: pointer;
+}
+.adminNav>li a{
+    display: inline-block;
+    width: 100%;
+    padding: 60px 0 0 20px;
+    border-bottom: white 1px solid;
+    color: white;
+}
+.options>a{
+    color: white;
+}
+.gestionStock{
+    padding-bottom: 10px;
+}
+
+.options{
+    margin: 10px 0 0 40px ;
+    font-size: 12px;
+}
+
+.adminMenu{
+    position: fixed;
+    padding: 10px 10px 20px 10px;
+    width: 200px;
+    background: black;
+    right: 0;
+    top: 00px;
+    height: 100vh;
+}
+
+.adminMenu>div{
+    height: 30px;
+    width: 60%;
+    padding-left: 35%;
+}
+
+/**********STOCK*********/
+h2{
+    color: white;
+
+    padding: 30px 0 30px 0;
+    background: #0c0c0c;
+    font-weight: bold;
+    font-size: 24px;
+}
+h2>span{
+    display: inline-block;
+    padding: 0 0 0 20px ;
+    text-transform: uppercase;
+}
+
+/* ADMIN STOCK */
+
+table{
+    margin: 50px auto 50px auto;
+    
+}
+thead{
+    background: #0c0c0c;
+    color: white;
+    font-weight: bold;
+}
+tr:nth-of-type(2n){
+    background: #87a9b0;
+    color: white;
+}
+th,td{
+    padding: 10px;
+    text-align: center;
+}
+button{
+    text-align: center;
+    background: transparent;
+}
+
+.stockImg{
+    filter: invert(1);
+}
+
+button:hover:not(button:disabled){
+    cursor: pointer;
+}
+button:hover:not(button:disabled) img{
+    filter: invert(50%);
+
+}
+
+body,TABLE,FORM {
+    font-family: montserrat,sans-serif;
+}
+
+/* Catégories */
+.AjoutCat{
+    padding: 50px 20px 50px 20px;
+}
+.enregistrer{
+    padding: 5px 20px;
+    background: transparent;
+    border: black 1px solid;
+    border-radius: 5px;
+}
+.enregistrer:hover{
+    cursor: pointer;
+    color: grey;
+    border: grey solid 1px;
+}
+button:disabled img,
+button[disabled] img{
+    filter: invert(90%);
+}
+
+/* Ajout T-shirt */
+
+.TabAjout tr:nth-of-type(7),.TabAjout thead{
+    font-weight: bold;
+}
