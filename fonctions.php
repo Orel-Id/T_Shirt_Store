@@ -285,7 +285,150 @@ function MotifCategorie($id,$bool_save,$newName){
     }
 }
 
-function card(){
-
+/***************************************************************************************************
+ * Fonctions Miniature:                                                                             *
+ *  - liste_repertoire : paramétre lien vers le répertoire                                         *
+ *      Parcourt le répertoire courant et tous ses sous répertoires                                *
+ *  - est_image : paramétre l'image à tester                                                       *
+ *    Teste si le fichier passé en paramètre correspond aux extensions de $type_ok                 *
+ * - genre_miniature: paramétres = lien répertoire, lien image, lien miniature                     *
+ *    Génère la miniature de l'image dans le sous-répertoire 'miniature' si elle n'existe pas déjà *
+ * - ajoute_lien: paramètres = lien image, lien miniature, le fichier                              *
+ *    Crée le lien et retourne le tableau                                                          *
+ * - affichage : /                                                                                 *
+ *    Affiche le tableau                                                                           *
+ **************************************************************************************************/
+error_reporting(E_ALL | E_STRICT);
+$types_ok = array ('image/jpeg', 'image/gif', 'image/png');
+$tabl_exclus = array ('.', '..', 'miniature');
+$tabl_liens = array();
+function liste_repertoire($dir) {
+    if ($handle = opendir($dir)) {
+        while (($file = readdir($handle)) !== false) {
+            $chemin_fichier = $dir.'/'.$file;
+            if (is_dir($chemin_fichier)) {
+                if (!in_array($file, $GLOBALS['tabl_exclus'])) {
+                    liste_repertoire($dir.'/'.$file);
+                }
+            } else {
+                if (est_image($chemin_fichier)) {
+                    $chemin_miniature = $dir.'/miniature/'.$file;
+                    if (!file_exists($chemin_miniature)) {
+                        genere_miniature($dir, $chemin_fichier, $chemin_miniature);
+                    }
+                    ajoute_lien($chemin_fichier, $chemin_miniature, $file);
+                }
+            }
+        }
+        closedir($handle);
+    }
+    if(isset($GLOBALS['tabl_liens'])){
+       return $GLOBALS['tabl_liens'];
+    }
 }
+function est_image($chemin_fichier) {
+    if (list($GLOBALS['largeur'], $GLOBALS['hauteur'], $type) = getimagesize($chemin_fichier)) {
+        $type = image_type_to_mime_type($type);
+        if (in_array($type, $GLOBALS['types_ok'])) {
+            $ext = explode("/", $type);
+            $GLOBALS['extension'] = $ext[1];
+            return true;
+        }
+    }
+    return false;
+}
+function genere_miniature($dir, $chemin_image, $chemin_miniature) {
+    // Calcul du ratio entre la grande image et la miniature
+    $taille_max = 100;
+    if ($GLOBALS['largeur'] <= $GLOBALS['hauteur']) {
+        $ratio = $GLOBALS['hauteur'] / $taille_max;
+    } else {
+        $ratio = $GLOBALS['largeur'] / $taille_max;
+    }
+
+    // Définition des dimensions de la miniature
+    $larg_miniature = $GLOBALS['largeur'] / $ratio;
+    $haut_miniature = $GLOBALS['hauteur'] / $ratio;
+
+    // Crée la ressource image pour la miniature
+    $destination = imagecreatetruecolor($larg_miniature, $haut_miniature);
+
+    // Retourne un identifiant d'image jpeg, gif ou png
+    $source = call_user_func('imagecreatefrom'.$GLOBALS['extension'], $chemin_image);
+
+    // Redimensionne la grande image
+    imagecopyresampled(    $destination,
+        $source,
+        0, 0, 0, 0,
+        $larg_miniature,
+        $haut_miniature,
+        $GLOBALS['largeur'],
+        $GLOBALS['hauteur']);
+
+    // Si le répertoire de miniature n'existe pas, on le crée
+    if (!is_dir($dir.'/miniature')) {
+        mkdir ($dir.'/miniature', 0700);
+    }
+
+    // Écriture physique de l'image
+    call_user_func('image'.$GLOBALS['extension'], $destination, $chemin_miniature);
+
+    // Détruit les ressources temporaires créées
+    imagedestroy($destination);
+    imagedestroy($source);
+}
+function ajoute_lien($chemin_image, $chemin_miniature, $file) {
+    // Récupère la taille de la miniature sous forme HTML (width="xxx" height="yyy")
+    $taille_html_miniature = getimagesize($chemin_miniature);
+    $taille_html_miniature = $taille_html_miniature[3];
+
+    // Rajoute le lien vers l'image au tableau global $GLOBALS['tabl_liens']
+    $lien = '<a href="'.$chemin_image.'">';
+    $lien .= '<img src="'.$chemin_miniature.'" '.$taille_html_miniature.' alt="'.$file.'">';
+    $lien .= '</a>'."\n";
+
+    array_push($GLOBALS['tabl_liens'], $lien);
+}
+function upload_image($dossier,$extensions,$nom_fichier,$taille_maxi){
+    //$dossier = 'upload/';
+    $fichier = basename($_FILES[$nom_fichier]['name']);
+   // $taille_maxi = 100000;
+    $taille = filesize($_FILES[$nom_fichier]['tmp_name']);
+    //$extensions = array('.png', '.gif', '.jpg', '.jpeg');
+    $extension = strrchr($_FILES[$nom_fichier]['name'], '.');
+//Début des vérifications de sécurité...
+    if(!in_array($extension, $extensions)) //Si l'extension n'est pas dans le tableau
+    {
+        $erreur = 'Vous devez uploader un fichier de type png, gif, jpg, jpeg, txt ou doc...';
+    }
+    if($taille>$taille_maxi)
+    {
+        $erreur = 'Le fichier est trop gros...';
+    }
+    if(!isset($erreur)) //S'il n'y a pas d'erreur, on upload
+    {
+        //On formate le nom du fichier ici...
+        $fichier = strtr($fichier,
+            'ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÒÓÔÕÖÙÚÛÜÝàáâãäåçèéêëìíîïðòóôõöùúûüýÿ',
+            'AAAAAACEEEEIIIIOOOOOUUUUYaaaaaaceeeeiiiioooooouuuuyy');
+        $fichier = preg_replace('/([^.a-z0-9]+)/i', '-', $fichier);
+        if(move_uploaded_file($_FILES[$nom_fichier]['tmp_name'], $dossier . $fichier)) //Si la fonction renvoie TRUE, c'est que ça a fonctionné...
+        {
+            echo 'Upload effectué avec succès !';
+        }
+        else //Sinon (la fonction renvoie FALSE).
+        {
+            echo 'Echec de l\'upload !';
+        }
+    }
+    else
+    {
+        echo $erreur;
+    }
+}
+
+
+
+
+
     ?>

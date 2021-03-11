@@ -98,8 +98,24 @@ require ('fonctions.php');
                 </tr>
                 </tbody>
             </table>
-
         </form>
+          <form method="POST" action="ajout.php" enctype="multipart/form-data">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ajouter images</th>
+                    </tr>
+                </thead>
+                <tbody>
+                      <tr>
+                          <td> <input type="file" name="tshirt"><input type="hidden" name="MAX_FILE_SIZE" value="100000"></td>
+                      </tr>
+                      <tr>
+                          <td><input type="submit" name="envoyer" value="Envoyer le fichier"></td>
+                      </tr>
+              </tbody>
+            </table>
+          </form>
       </div>
     <?php
         }

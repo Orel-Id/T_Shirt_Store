@@ -2,7 +2,7 @@
 <?php
 require "fonctions.php";
 
-print_r($_POST);
+
 
 if(isset($_POST["nom"]) AND $_POST["nom"] != "" AND strlen($_POST["nom"]) <100){
     $nom = $_POST["nom"];
@@ -81,5 +81,11 @@ if(!$error){
 }
 
 //--> Ajouter prix dans formulaire et DB
+print_r($_POST);
+echo "<br>";
+print_r($_FILES);
+if(isset($_FILES["tshirt"])){
+    upload_image('assets/upload/',array('.png', '.gif', '.jpg', '.jpeg'),"tshirt",100000);
+}
 
 ?>
