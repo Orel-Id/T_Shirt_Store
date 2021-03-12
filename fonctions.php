@@ -316,7 +316,7 @@ function liste_repertoire($dir) {
                     if (!file_exists($chemin_miniature)) {
                         genere_miniature($dir, $chemin_fichier, $chemin_miniature);
                     }
-                    ajoute_lien($chemin_fichier, $chemin_miniature, $file);
+                    ajoute_lien_tab($chemin_fichier, $chemin_miniature, $file);
                 }
             }
         }
@@ -384,10 +384,30 @@ function ajoute_lien($chemin_image, $chemin_miniature, $file) {
 
     // Rajoute le lien vers l'image au tableau global $GLOBALS['tabl_liens']
     $lien = '<a href="'.$chemin_image.'">';
+    $lien .= '<img src="'.$chemin_miniature.'" '.$taille_html_miniature.' alt="'.$file.' target="_blank">';
+    $lien .= '</a>'."\n";
+
+    return $lien;
+    //array_push($GLOBALS['tabl_liens'], $lien);
+}
+function ajoute_lien_tab($chemin_image, $chemin_miniature, $file) {
+
+    $tab = array(
+        "chemin_image"  => $chemin_image,
+        "chemin_miniature" => $chemin_miniature,
+        "altFichier"=> $file,
+    );
+
+    // Récupère la taille de la miniature sous forme HTML (width="xxx" height="yyy")
+    $taille_html_miniature = getimagesize($chemin_miniature);
+    $taille_html_miniature = $taille_html_miniature[3];
+
+    // Rajoute le lien vers l'image au tableau global $GLOBALS['tabl_liens']
+    $lien = '<a href="'.$chemin_image.'">';
     $lien .= '<img src="'.$chemin_miniature.'" '.$taille_html_miniature.' alt="'.$file.'">';
     $lien .= '</a>'."\n";
 
-    array_push($GLOBALS['tabl_liens'], $lien);
+    array_push($GLOBALS['tabl_liens'], $tab);
 }
 function upload_image($dossier,$extensions,$nom_fichier,$taille_maxi){
     //$dossier = 'upload/';

@@ -92,6 +92,9 @@ require ('fonctions.php');
                     $error = true;
                     $message = "Erreur requête";
                 }
+                if(isset($_GET["tshirtListeMin"])) {
+                            echo '<div class="imgAdd"><input type="hidden" name="img" value="true"></div>';
+                }
                 ?>
                 <tr>
                     <th colspan="4"><label for="SaveT-shirt"><input class="enregistrer" type="submit" id="SaveT-shirt" value="Enregistrer"></th>
@@ -99,6 +102,21 @@ require ('fonctions.php');
                 </tbody>
             </table>
         </form>
+          <?php
+            if(isset($_GET["tshirtListeMin"])){
+                $session_data = unserialize($_GET["tshirtListeMin"]);
+                echo "<table>";
+                $i=0;
+                foreach ($session_data as $val_lien) {
+                    if($i%4 == 0){echo "<tr>";}
+                    $lien = ajoute_lien($val_lien["chemin_image"], $val_lien["chemin_miniature"], $val_lien["altFichier"]);
+                    echo "<td>".$lien."<td>";
+                    $i++;
+                    if($i%4 == 0){echo "</tr>";}
+                }
+                echo "</table>";
+            }
+          ?>
           <form method="POST" action="ajout.php" enctype="multipart/form-data">
             <table>
                 <thead>
@@ -417,6 +435,9 @@ require ('fonctions.php');
             </div>
         </div>
         <?php
+        }
+        if(isset($message)){
+            echo $message;
         }
         ?>
 
