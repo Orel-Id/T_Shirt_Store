@@ -4,6 +4,15 @@ define('PASS', 'hello');
 define('NOM_DB', 'TshirtStore');
 define('HOST', 'localhost');
 
+/* Empecher les injection sql */
+function sanitize_string($str) {
+    if (get_magic_quotes_gpc()) {
+        $sanitize = mysqli_real_escape_string(stripslashes($str));
+    } else {
+        $sanitize = mysqli_real_escape_string($str);
+    }
+    return $sanitize;
+}
 function MenuCatMainNav(){
     if($connexion = mysqli_connect(HOST,USER,PASS,NOM_DB)) {
         $sql = "SELECT Categories.Libelle FROM categories
@@ -28,12 +37,19 @@ function MenuCatMainNav(){
     return $message;
 }
 
-function selectAdminAjout($sql){
+function selectAdminAjout($sql, $idSelected = -1){
     if($connexion = mysqli_connect(HOST,USER,PASS,NOM_DB)) {
         $html= "";
         if ($results = mysqli_query($connexion, $sql)) {
             while ($row = mysqli_fetch_row($results)) {
-                $html = $html."<option value='" . $row[0] . "'>" . $row[1] . "</option>";
+                if($idSelected == -1){
+                    $html = $html."<option value='" . $row[0] . "'>" . $row[1] . "</option>";
+
+                }elseif($row[0] == $idSelected){
+                    $html = $html."<option value='" . $row[0] . "' selected='selected'>" . $row[1] . "</option>";
+                }else{
+                    $html = $html."<option value='" . $row[0] . "'>" . $row[1] . "</option>";
+                }
                 $error = false;
             }
             mysqli_free_result($results);
@@ -68,7 +84,7 @@ function SelectConstrutor($title,$sql,$idSelect,$FunctionName,$distinct){
 
         if ($results = mysqli_query($connexion, $sql)){
             if($distinct){
-                $selectHtml = $selectHtml."<option value='none'>--".$title."--</option>";
+                $selectHtml = $selectHtml."<option value='none' selected='selected'>--".$title."--</option>";
                 while ($row = mysqli_fetch_row($results)) {
                     $nomId = str_replace(" ","_",$row[0]);
                     $nomId = str_replace("&","ET",$nomId);
@@ -107,7 +123,10 @@ function SelectConstrutor($title,$sql,$idSelect,$FunctionName,$distinct){
  *********************************************************************************************************/
 function showStock($tab = 'none'){
     $html = "
-    <TABLE class='TableStock'>
+    <div class='MyConteneur'>
+    <div class='stock'>
+     <form action='Ajout_TShirt.php' method='post'>
+    <TABLE class='table-responsive table table-hover table-dark myTable'>
          <thead>
             <tr>";
     /********** NOM **********/
@@ -190,14 +209,14 @@ function showStock($tab = 'none'){
 
             if ($results = mysqli_query($connexion, $sql)) {
                 while ($row = mysqli_fetch_row($results)) {
-                    $html = $html . "<tr><td>" . $row[1] . "</td><td>" . $row[2] . "</td><td>" . $row[4] . "</td><td>" . $row[5] . "</td><td>" . $row[6] . "</td><td>" . $row[7] . "</td><td>" . $row[3] . "</td><td> <input type='radio' id='tshirtModifId".$row[0]."' name='DeleteTshirt' value=".$row[0]."
-            ></td><td> <input type='checkbox' id='tshirtDelId".$row[0]."' name='ModifTshirt' value=".$row[0]."
+                    $html = $html . "<tr><td>" . $row[1] . "</td><td>" . $row[2] . "</td><td>" . $row[4] . "</td><td>" . $row[5] . "</td><td>" . $row[6] . "</td><td>" . $row[7] . "</td><td>" . $row[3] . "</td><td> <input type='radio' id='tshirtModifId".$row[0]."' name='ModifTshirt' value=".$row[0]."
+            ></td><td> <input type='checkbox' id='tshirtDelId".$row[0]."' name='DeleteTshirt' value=".$row[0]."
             ></td></tr>";
                     $error = false;
                 }
                 mysqli_free_result($results);
                 mysqli_close($connexion);
-                $html = $html . "</tbody></TABLE>";
+                $html = $html . "</tbody></TABLE></form></div></div>";
             } else {
                 $error = true;
                 $message = "Erreur requête";
@@ -447,8 +466,219 @@ function upload_image($dossier,$extensions,$nom_fichier,$taille_maxi){
     }
 }
 
+function TShirtAddEdit($idTshirt= -1,$imgAdd){
+    if ($connexion = mysqli_connect(HOST, USER, PASS, NOM_DB)) {
+        if($idTshirt!=-1){
+            $title = "Modifier un t-shirt";
+
+            $sql = "SELECT T_Shirt.Name, T_Shirt.Description, T_Shirt.ID_Taille,T_Shirt.ID_Couleur,T_Shirt.ID_Sexe,T_Shirt.ID_Catégorie,T_Shirt.ID_Artiste,T_Shirt.NB_stock, T_Shirt.ID_liste_img
+                        FROM T_Shirt
+                        WHERE T_Shirt.ID =".$idTshirt;
+
+                if ($results = mysqli_query($connexion, $sql)) {
+                    if ($row = mysqli_fetch_row($results)) {
+                        $nom = $row[0];
+                        $description = $row[1];
+                        $IdTaille = $row[2];
+                        $IdCouleur = $row[3];
+                        $IdSexe = $row[4];
+                        $IdCategorie = $row[5];
+                        $IdArtiste = $row[6];
+                        $NbStock = $row[7];
+                        $listeTShirt = $row[8];
+                    }
+                }else{
+                    $message = "TShirt non trouvé";
+                    $error = true;
+                }
+            }else{
+                $title = "Ajouter un t-shirt";
+                $nom = "";
+                $description = "";
+                $IdTaille = -1;
+                $IdCouleur = -1;
+                $IdSexe = -1;
+                $IdCategorie = -1;
+                $IdArtiste = -1;
+                $NbStock = "";
+                $listeTShirt = -1;
+            }
+        }else{
+            $message = "Echec de la connexion";
+            $error = true;
+        }
 
 
+                $html = '<div class="AjoutImg">
+                  <h2><span>'.$title.'</span></h2>
+            <div class="ajoutTShirt">
+                <form action="ajout.php" method="post">
+                    <table class="table-responsive table table-hover table-dark myMiddleTable">
+                        <thead>
+                        <tr>
+                            <th colspan="4">Informations T-Shirt</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="2"><label for="nom">Nom</label></td><td colspan="2"><input class="form-control" type="text" id="name" name="nom" value="'.$nom.'"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><label for="description">Description</label></td><td colspan="2"><input class="form-control" type="text" id="description" name="description" value="'.$description.'"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><label for="categorie">Catégorie</label></td>
+                            <td colspan="2">
+                                <select class="custom-select mr-sm-2" name="categorie" id="categorie-select">
+                                    <option value="">--Choix Catégorie--</option>';
+
+                $html = $html.selectAdminAjout("SELECT Categories.ID, Categories.Libelle FROM categories
+                                        WHERE Categories.Date_Supression IS NULL",$IdCategorie);
+
+                $html = $html.'</select>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2"><label for="couleur">Couleur</label></td>
+                            <td colspan="2">
+                                <select class="custom-select mr-sm-2" name="couleur" id="couleur-select">
+                                    <option value="">--Choix Couleur--</option>';
+                $html = $html.selectAdminAjout("SELECT Couleur.ID, Couleur.Libelle FROM Couleur
+                                                    WHERE Couleur.Date_Supression IS NULL",$IdCouleur);
+                $html = $html.'</select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><label for="artistes">Artiste</label></td>
+                            <td colspan="2">
+                                <select  class="custom-select mr-sm-2" name="artistes" id="artistes-select">
+                                    <option value="">--Choix Artiste--</option>';
+                $html = $html.selectAdminAjout("SELECT Artiste.ID, CONCAT(Artiste.Nom,' ',Artiste.Prenom) FROM Artiste
+                                                    WHERE Artiste.Date_Supression IS NULL",$IdArtiste);
+                $html = $html.' </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><label for="genre">Genre</label></td>
+                            <td colspan="2">
+                                <select class="custom-select mr-sm-2" name="genre" id="genre-select">
+                                    <option value="">--Choix Genre--</option>';
+                $html = $html.selectAdminAjout("SELECT Genre.ID, Genre.Libelle FROM Genre
+                                                    WHERE Genre.Date_Supression IS NULL",$IdSexe);
+                $html = $html.' </select>
+                            </td>
+                        </tr>';
+
+    if($idTshirt!=-1) {
+        $html = $html . '<tr>
+                            <th colspan="4">Taille & Quantité</th>
+                        </tr>
+                        <tr>
+                        <td><label for="taille">Taille: </label></td>
+                            <td colspan="2">
+                                <select class="custom-select mr-sm-2" name="taille" id="taille-select">
+                                    <option value="">--Choix Taille--</option>';
+        $html = $html . selectAdminAjout("SELECT Tailles.ID, Tailles.Libelle FROM Tailles
+                                        WHERE Tailles.Date_Supression IS NULL", $IdTaille);
+        $html = $html . ' </select>
+                        </td>';
+        $html = $html . '<td><input class="form-control" type="number" name="tab[' . $nom . ']" id="taille" value="' . $NbStock . '"></td></tr>';
+        $html = $html . '
+                        <tr>
+                            <th colspan="4"><label for="SaveT-shirt"><input class="btn btn-secondary" type="submit" id="SaveT-shirt" value="Enregistrer"></th>
+                        </tr>';
+
+             }else{
+        $sql_taille = "SELECT Tailles.ID, Tailles.Libelle FROM Tailles
+                                        WHERE Tailles.Date_Supression IS NULL";
+        /**** OUVERTURE DE CONNEXION ****/
+        if ($connexion = mysqli_connect(HOST, USER, PASS, NOM_DB)) {
+            if ($results = mysqli_query($connexion, $sql_taille)) {
+                $i = 0;
+                while ($row = mysqli_fetch_row($results)) {
+                    if ($i % 2 == 0) {
+                        echo "<tr>";
+                    }
+                    $html = $html ."<td><label for='" . $row[0] . "'>" . $row[1] . "</label></td>";
+                    $html = $html .'<td><input class="form-control" type="number" name="tab[' . $row[0] . ']" id="taille' . $row[1] . '"></td>';
+                    if ($i % 2 != 0) {
+                        $html = $html ."</tr>";
+                    }
+                    $i++;
+                }
+                mysqli_free_result($results);
+            } else {
+                $error = true;
+                $message = "Erreur requête";
+            }
+        }else {
+            $error = true;
+            $message = "Erreur connexion";
+        }
+        mysqli_free_result($results);
+        mysqli_close($connexion);
+    }
+    if($imgAdd){
+        $html = $html .'<div class="imgAdd"><input type="hidden" name="img" value="true"></div>';
+    }
+    $html = $html .'<tr>
+            <th colspan="4"><label for="SaveT-shirt"><input class="btn btn-secondary" type="submit" id="SaveT-shirt" value="Enregistrer"></th>
+        </tr>
+        </tbody>
+            </table>
+               </form>
+                  </div>
+                    </div>';
+
+        return array(
+            "HTML" => $html,
+            "IdListImage" => $listeTShirt,
+            "ERROR" => $error,
+            "Message" => $message);
+    }
+
+function AddImg($idTShirt=-1){
+    $html = ' <h2><span>Ajouter images</span></h2>
+        <form method="POST" action="ajout.php" enctype="multipart/form-data" class="">
+            <div class="add">
+                <table  class="addTab">
+                    <tr>
+                        <td><label for="tshirtimageModifAdd">Choose file...</label></td>
+                        <td> <input type="file" id="tshirtimageModifAdd" name="tshirt"><input  type="hidden" name="MAX_FILE_SIZE" value="100000"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input class="btn btn-secondary" type="submit" name="envoyer" value="Envoyer le fichier"></td>
+                    </tr>
+                </table>';
+    if($idTShirt!=-1){
+        $html = $html.'<input type="hidden" name="idModif" value=' .$idTShirt . '>';
+    }
+    $html = $html.' </div>
+        </form>';
+    return $html;
+}
+function AffichageImgtempo($tshirtListeMin)
+{
+    $html = "<h2><span>Images Ajoutées</span></h2>";
+    $session_data = unserialize($tshirtListeMin);
+    $html = $html . "<table >";
+    $i = 0;
+    foreach ($session_data as $val_lien) {
+        if ($i % 4 == 0) {
+            echo "<tr>";
+        }
+        $lien = ajoute_lien($val_lien["chemin_image"], $val_lien["chemin_miniature"], $val_lien["altFichier"]);
+        $html = $html . "<td>" . $lien . "<td>";
+        $i++;
+        if ($i % 4 == 0) {
+            echo "</tr>";
+        }
+    }
+    $html = $html . '</table>';
+
+    return $html;
+}
 
 
     ?>

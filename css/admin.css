@@ -4,22 +4,125 @@
     src: url("../assets/Montserrat/Montserrat-Light.ttf");
     font-weight: normal;
 }
-.flex{
-    display: flex;
+nav {
+    font-family: montserrat, sans-serif;
 }
-.f-space-between{
-    justify-content: space-between;
+.logo{
+    width: 60px;
+    height: 60px;
+    background: url("../assets/logo.png");
+    background-size: 100%;
 }
-.stock,.commandes,.Ajout,.categories{
+.dropdown-item{
+    padding: 10px;
+}
+body{
+    background: #212529;
+}
+
+.MyConteneur{
+    width: 100vw;
     min-width: 1000px;
-    padding-right: 200px;
 }
-/******** NAV *******/
+.stock,.categories,.couleurs,.genres,.tailles,.artistes,.ajoutTShirt,.add{
+    margin-left: 1%;
+   /* background: #454d55; background: #333;*/
+    background: #343a40;
+    width: 99%;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.add{
+   margin-bottom: 100px;
+}
+.stockImg{
+    filter: invert(1);
+}
+button:disabled .stockImg{
+    filter: invert(30%);
+}
+.myTable{
+    width: 1100px;
+    margin: auto;
+}
+.myMiddleTable th{
+    text-transform: uppercase;
+    font-size: 18px;
+    text-align: center;
+}
+.mySmallTable{
+    width: 300px;
+    margin-left: 50px;
+}
+.myMiddleTable{
+    width: 500px;
+    margin-left: 50px;
+}
+.ajout{
+    margin: auto;
+    width: 650px;
+}
+
+h2{
+    color: white;
+    padding: 30px 0 30px 0;
+    font-weight: bold;
+    font-size: 24px;
+}
+h2>span{
+    display: inline-block;
+    padding: 0 0 0 20px ;
+    text-transform: uppercase;
+}
+input[type="text"] {
+    background: #343a40;
+    border-radius: 5px;
+    color: white;
+}
+input[type="file"]{
+    color: white;
+
+}
+input[type="textarea"]{
+    resize: none;
+    background:#343a40;
+    border-radius: 5px;
+    color: white;
+}
+label{
+    color: white;
+    padding-right: 20px;
+}
+.addTab td{
+    padding: 20px;
+    text-align: right;
+}
+.add{
+    padding: 50px 20px 50px 20px;
+}
+
+/* Ajout T-shirt */
+
+.imgAdd{
+    display: none;
+}
+.error{
+    color: red;
+}
+.notError{
+    color: greenyellow;
+}
+.message{
+    color: #4b6d72;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/*
 .adminNav{
     color: white;
     height: 100vh;
 }
-
 
 .log{
     text-align: right;
@@ -71,86 +174,4 @@
     padding-left: 35%;
 }
 
-/**********STOCK*********/
-h2{
-    color: white;
-
-    padding: 30px 0 30px 0;
-    background: #0c0c0c;
-    font-weight: bold;
-    font-size: 24px;
-}
-h2>span{
-    display: inline-block;
-    padding: 0 0 0 20px ;
-    text-transform: uppercase;
-}
-
-/* ADMIN STOCK */
-
-table{
-    margin: 50px auto 50px auto;
-    
-}
-thead{
-    background: #0c0c0c;
-    color: white;
-    font-weight: bold;
-}
-tr:nth-of-type(2n){
-    background: #87a9b0;
-    color: white;
-}
-th,td{
-    padding: 10px;
-    text-align: center;
-}
-button{
-    text-align: center;
-    background: transparent;
-}
-
-.stockImg{
-    filter: invert(1);
-}
-
-button:hover:not(button:disabled){
-    cursor: pointer;
-}
-button:hover:not(button:disabled) img{
-    filter: invert(50%);
-
-}
-
-body,TABLE,FORM {
-    font-family: montserrat,sans-serif;
-}
-
-/* Catégories */
-.AjoutCat{
-    padding: 50px 20px 50px 20px;
-}
-.enregistrer{
-    padding: 5px 20px;
-    background: transparent;
-    border: black 1px solid;
-    border-radius: 5px;
-}
-.enregistrer:hover{
-    cursor: pointer;
-    color: grey;
-    border: grey solid 1px;
-}
-button:disabled img,
-button[disabled] img{
-    filter: invert(90%);
-}
-
-/* Ajout T-shirt */
-
-.TabAjout tr:nth-of-type(7),.TabAjout thead{
-    font-weight: bold;
-}
-.imgAdd{
-    display: none;
-}
+ */
