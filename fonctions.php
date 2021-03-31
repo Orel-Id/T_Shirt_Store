@@ -471,7 +471,7 @@ function TShirtAddEdit($idTshirt= -1,$imgAdd){
         if($idTshirt!=-1){
             $title = "Modifier un t-shirt";
 
-            $sql = "SELECT T_Shirt.Name, T_Shirt.Description, T_Shirt.ID_Taille,T_Shirt.ID_Couleur,T_Shirt.ID_Sexe,T_Shirt.ID_Catégorie,T_Shirt.ID_Artiste,T_Shirt.NB_stock, T_Shirt.ID_liste_img
+            $sql = "SELECT T_Shirt.Name, T_Shirt.Description, T_Shirt.ID_Taille,T_Shirt.ID_Couleur,T_Shirt.ID_Sexe,T_Shirt.ID_Catégorie,T_Shirt.ID_Artiste,T_Shirt.NB_stock, T_Shirt.ID_liste_img,T_Shirt.Prix
                         FROM T_Shirt
                         WHERE T_Shirt.ID =".$idTshirt;
 
@@ -486,6 +486,7 @@ function TShirtAddEdit($idTshirt= -1,$imgAdd){
                         $IdArtiste = $row[6];
                         $NbStock = $row[7];
                         $listeTShirt = $row[8];
+                        $prix = $row[9];
                     }
                 }else{
                     $message = "TShirt non trouvé";
@@ -502,6 +503,7 @@ function TShirtAddEdit($idTshirt= -1,$imgAdd){
                 $IdArtiste = -1;
                 $NbStock = "";
                 $listeTShirt = -1;
+                $prix = 0;
             }
         }else{
             $message = "Echec de la connexion";
@@ -525,6 +527,9 @@ function TShirtAddEdit($idTshirt= -1,$imgAdd){
                         </tr>
                         <tr>
                             <td colspan="2"><label for="description">Description</label></td><td colspan="2"><input class="form-control" type="text" id="description" name="description" value="'.$description.'"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><label for="prix">Prix</label></td><td colspan="2"><input class="form-control" type="number" id="prix" name="prix" value="'.$prix.'"></td>
                         </tr>
                         <tr>
                             <td colspan="2"><label for="categorie">Catégorie</label></td>
@@ -583,11 +588,8 @@ function TShirtAddEdit($idTshirt= -1,$imgAdd){
                                         WHERE Tailles.Date_Supression IS NULL", $IdTaille);
         $html = $html . ' </select>
                         </td>';
-        $html = $html . '<td><input class="form-control" type="number" name="tab[' . $nom . ']" id="taille" value="' . $NbStock . '"></td></tr>';
-        $html = $html . '
-                        <tr>
-                            <th colspan="4"><label for="SaveT-shirt"><input class="btn btn-secondary" type="submit" id="SaveT-shirt" value="Enregistrer"></th>
-                        </tr>';
+        $html = $html . '<td><input class="form-control" type="number" name="nbstock" id="taille" value="' . $NbStock . '"></td></tr>';
+
 
              }else{
         $sql_taille = "SELECT Tailles.ID, Tailles.Libelle FROM Tailles
@@ -679,6 +681,35 @@ function AffichageImgtempo($tshirtListeMin)
 
     return $html;
 }
+function AffichageImg($idList){
+    if ($connexion = mysqli_connect(HOST, USER, PASS, NOM_DB)) {
+        $sql = "SELECT Image.lien_image,Image.lien_miniature,Image.AltImage FROM Image
+                WHERE Image.ID_Liste_Image =".$idList;
+        $tab = [];
+        if ($results = mysqli_query($connexion, $sql)) {
+           $html = "<table><tr>";
+            while ($row = mysqli_fetch_row($results)) {
+                $html = $html."<td>".ajoute_lien($row[0],$row[1],$row[2])."</td>";
+                $error = false;
+            }
+            mysqli_free_result($results);
+            mysqli_close($connexion);
+            $html = $html . "</tr></table>";
+        } else {
+            $error = true;
+            $message = "Erreur requête";
+        }
 
+    }else {
+        $error = true;
+        $message = "Echec connexion DB";
+    }
+
+    if(!$error){
+        return $html;
+    }else{
+        return $message;
+    }
+}
 
     ?>

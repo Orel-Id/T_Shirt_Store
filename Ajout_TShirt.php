@@ -30,6 +30,8 @@ if(isset($_GET["message"])){
         /* Affiche un tableau avec les images avant de les ajouter à la DB */
         if(isset($_GET["tshirtListeMin"])){
             echo AffichageImgtempo($_GET["tshirtListeMin"]);
+        }elseif(isset($idTshirtList)){
+            echo AffichageImg($idTshirtList);
         }
 
         echo "idModif= ".$idTshirt;

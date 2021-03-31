@@ -49,10 +49,29 @@ if(isset($_POST["genre"]) AND is_numeric($_POST["genre"])){
     $message = "Le genre est incorrecte";
 }
 
+if(isset($_POST["prix"]) AND is_numeric($_POST["prix"])){
+    $prix = $_POST["prix"];
+}else{
+    $error = true;
+    $message = "Le prix est incorrecte";
+}
+if(isset($_POST["taille"]) AND is_numeric($_POST["taille"])){
+    $idTaille = $_POST["taille"];
+}else{
+    $error = true;
+    $message = "La taille est incorrecte";
+}
+if(isset($_POST["nbstock"]) AND is_numeric($_POST["nbstock"])){
+    $nbStock = $_POST["nbstock"];
+}else{
+    $error = true;
+    $message = "Le nombre en stock est incorrecte";
+}
+
 
 
 if(!$error AND !isset($_POST["idModif"])){
-    if(isset($_POST["img"])){
+    if(isset($_POST["img"])){  // Si il y a des images je crée un dossier et une liste d'image
         if($connexion = mysqli_connect(HOST,USER,PASS,NOM_DB)) {
             $sql = "INSERT INTO liste_images SET
                     Date_creation = Now();";
@@ -94,9 +113,9 @@ if(!$error AND !isset($_POST["idModif"])){
             $message = "Echec connexion DB";
         }
     }else{
-        $idlistImage = null;
+        $idlistImage = null; // Sinon l'id liste image est nulle
     }
-
+        // J'ajoute chaque T_shirt avec ces caratéristiques en fonction de sa taille
         foreach ($_POST["tab"] as $key => $val) {
             $sql = "INSERT INTO T_Shirt SET
             Name = '".$nom."',
@@ -107,6 +126,7 @@ if(!$error AND !isset($_POST["idModif"])){
             ID_Artiste = ".$idArtiste.",
             ID_Sexe = ".$idGenre.",
             ID_liste_img = ".$idlistImage.",
+             Prix = ".$prix.",
            ";
                 $idTaille = $key;
                 $nbStock = $val;
@@ -130,14 +150,14 @@ if(!$error AND !isset($_POST["idModif"])){
                 }
             }
     header('Location: Ajout_TShirt.php?error='.$error.'&message='.$message);
-}elseif(!$error AND isset($_POST["idModif"])){
+}elseif(!$error AND isset($_POST["idModif"])){ // Si il n'y a pas d'erreur dans mes valeurs pour ma DB et que je suis en modification
     print_r($_POST);
-    if(isset($_POST["imgListe"])){
-        $idlistImage = $_POST["imgListe"];
+    if(isset($_POST["imgListe"])){ // Je vérifie qu'il y a une liste d'images
+        $idlistImage = $_POST["imgListe"]; // J'attribue la liste d'image
         }else{
         if($connexion = mysqli_connect(HOST,USER,PASS,NOM_DB)) {
             $sql = "INSERT INTO liste_images SET
-                    Date_creation = Now();";
+                    Date_creation = Now();"; // Sinon j'en crée une nouvelle et je crée le dossier et je range les images dedans (déplacement depuis upload)
             if ($results = mysqli_query($connexion, $sql)) {
                 $idlistImage = mysqli_insert_id($connexion);
                 $error = false;
@@ -157,12 +177,13 @@ if(!$error AND !isset($_POST["idModif"])){
             if(!file_exists("assets/".$nom_dossier."/miniature/")){
                 mkdir("assets/".$nom_dossier."/miniature/");
             }
-
         }else{
             $error = true;
             $message = "Erreur Connexion";
         }
     }
+
+    // Je sauvegarde mes images en DB en parcourant le dossier de meme nom que le t-shirt
 
     if($connexion = mysqli_connect(HOST,USER,PASS,NOM_DB)) {
             /***** IMAGES *****/
@@ -210,10 +231,34 @@ if(!$error AND !isset($_POST["idModif"])){
             $message = "Echec connexion DB";
         }
     header('Location: Ajout_TShirt.php?error='.$error.'&message='.$message);
+
+    if($connexion = mysqli_connect(HOST,USER,PASS,NOM_DB)) {
+        /* MODIFICATION T_SHIRT */
+        $sql_Update_TShirt = "UPDATE T_Shirt SET
+            T_Shirt.Name = " . $nom . ",
+            T_Shirt.Prix = " . $prix . ",
+            T_Shirt.Description = " . $description . ",
+            T_Shirt.NB_stock = " . $nbStock . ",
+            T_Shirt.ID_Taille = " . $idTaille . ",
+            T_Shirt.ID_Couleur = " . $idCouleur . ",
+            T_Shirt.ID_Sexe = " . $idGenre . ",
+            T_Shirt.ID_Catégorie = " . $idCategorie . ",
+            T_Shirt.ID_Artiste = " . $idArtiste . " 
+            WHERE T_Shirt.ID = ;";
+        if ($results = mysqli_query($connexion, $sql_Update_TShirt)) {
+            $error = false;
+            $message = "TShirt Modifié";
+        } else {
+            $error = true;
+            $message = "Erreur requête TShirt Modifié";
+        }
+        mysqli_free_result($results);
+        mysqli_close($connexion);
+    }else{
+        $error = true;
+        $message = "Erreur Connexion DB";
+    }
 }
-
-
-//--> Ajouter prix dans formulaire et DB
 
 
 if(isset($_FILES["tshirt"])){

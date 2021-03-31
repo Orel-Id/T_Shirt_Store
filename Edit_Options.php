@@ -381,10 +381,6 @@ if(isset($_POST["ModifGenre"]) AND isset($_POST["idToEdit"]) AND is_numeric($_PO
     mysqli_close($connexion);
 }
 
-
-
-
-
 /* Ajout Taille */
 
 if(isset($_POST["NewTaille"]) AND strlen($_POST["NewTaille"]) !=0 ){
@@ -479,10 +475,6 @@ if(isset($_POST["ModifTaille"]) AND isset($_POST["idToEdit"]) AND is_numeric($_P
     mysqli_free_result($results);
     mysqli_close($connexion);
 }
-
-
-
-
 
 
 
